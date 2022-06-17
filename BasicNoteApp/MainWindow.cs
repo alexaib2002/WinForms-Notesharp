@@ -18,7 +18,6 @@ namespace NotepadSharp
         {
             InitializeComponent();
             CenterToParent();
-            
         }
 
         private void OnCloseOptionPressed(object sender, EventArgs e)
@@ -58,9 +57,11 @@ namespace NotepadSharp
 
         private void OnSaveAction(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = DialogFilters;
-            saveFileDialog.RestoreDirectory = true;
+            SaveFileDialog saveFileDialog = new SaveFileDialog
+            {
+                Filter = DialogFilters,
+                RestoreDirectory = true
+            };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -72,9 +73,11 @@ namespace NotepadSharp
 
         private void OnLoadAction(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = DialogFilters;
-            openFileDialog.RestoreDirectory = true;
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = DialogFilters,
+                RestoreDirectory = true
+            };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {

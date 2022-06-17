@@ -231,7 +231,7 @@
             // 
             this.aboutTextEditorToolStripMenuItem.Name = "aboutTextEditorToolStripMenuItem";
             this.aboutTextEditorToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.aboutTextEditorToolStripMenuItem.Text = "About Text Editor";
+            this.aboutTextEditorToolStripMenuItem.Text = "About NoteSharp";
             // 
             // menuPanel
             // 
@@ -257,7 +257,7 @@
             this.Controls.Add(this.menuPanel);
             this.MainMenuStrip = this.menuPanel;
             this.Name = "MainWindow";
-            this.Text = "Text Editor";
+            this.Text = "NoteSharp";
             this.footPanel.ResumeLayout(false);
             this.footPanel.PerformLayout();
             this.menuPanel.ResumeLayout(false);

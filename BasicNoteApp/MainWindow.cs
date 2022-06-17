@@ -10,6 +10,7 @@ namespace NotepadSharp
 
         private readonly List<string> textHistory = new List<string>();
         private int historyIndex = 0;
+        private string originText;
 
         private int currentLine;
         private int currentColumn;
@@ -18,6 +19,12 @@ namespace NotepadSharp
         {
             InitializeComponent();
             CenterToParent();
+            OnNewDocumentLoad();
+        }
+
+        private void OnNewDocumentLoad()
+        {
+            originText = txtEditBox.Text;
         }
 
         private void OnCloseOptionPressed(object sender, EventArgs e)
@@ -44,7 +51,7 @@ namespace NotepadSharp
             else
             {
                 Console.WriteLine("No more text to undo, resseting to base text");
-                txtEditBox.Text = "";
+                txtEditBox.Text = originText;
             }
             
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
@@ -52,7 +59,17 @@ namespace NotepadSharp
 
         private void OnRedoAction(object sender, EventArgs e)
         {
-            // TODO implement historic
+            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
+            
+            if (historyIndex <= textHistory.Count)
+            {
+                txtEditBox.Text = textHistory[historyIndex++ - 1];
+            } else
+            {
+                Console.WriteLine("Reached latest index");
+            }
+
+            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
 
         private void OnSaveAction(object sender, EventArgs e)

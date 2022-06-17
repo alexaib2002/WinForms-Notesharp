@@ -35,7 +35,20 @@ namespace NotepadSharp
 
         private void OnUndoAction(object sender, EventArgs e)
         {
-            // TODO implement historic
+            // hack for not calling TextChanged Event
+            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
+            
+            if (historyIndex >= 2)
+            {
+                txtEditBox.Text = textHistory[--historyIndex - 1];
+            }
+            else
+            {
+                Console.WriteLine("No more text to undo, resseting to base text");
+                txtEditBox.Text = "";
+            }
+            
+            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
 
         private void OnRedoAction(object sender, EventArgs e)

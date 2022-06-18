@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -35,25 +36,21 @@ namespace NotepadSharp
         private void OnTextChanged(object sender, EventArgs e)
         {
             string newText = (sender as RichTextBox).Text;
+            if (historyIndex < textHistory.Count) textHistory.RemoveRange(historyIndex, textHistory.Count);
             textHistory.Insert(historyIndex++, newText);
             UpdatePositionLabel(sender as RichTextBox);
         }
+
+        // TODO improve code
 
         private void OnUndoAction(object sender, EventArgs e)
         {
             // hack for not calling TextChanged Event
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
             
-            if (historyIndex >= 2)
-            {
-                txtEditBox.Text = textHistory[--historyIndex - 1];
-            }
-            else
-            {
-                Console.WriteLine("No more text to undo, resseting to base text");
-                txtEditBox.Text = originText;
-            }
-            
+            if (historyIndex >= 1) txtEditBox.Text = textHistory[historyIndex-- - 1];
+            else txtEditBox.Text = originText;
+
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
 
@@ -61,13 +58,7 @@ namespace NotepadSharp
         {
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
             
-            if (historyIndex <= textHistory.Count)
-            {
-                txtEditBox.Text = textHistory[historyIndex++ - 1];
-            } else
-            {
-                Console.WriteLine("Reached latest index");
-            }
+            if (historyIndex <= textHistory.Count - 1) txtEditBox.Text = textHistory[++historyIndex - 1];
 
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }

@@ -181,7 +181,7 @@
             this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
             this.undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.undoToolStripMenuItem.Text = "Undo";
-            this.undoToolStripMenuItem.Click += new System.EventHandler(this.OnUndoAction);
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.OnHistoryAction);
             // 
             // redoToolStripMenuItem
             // 
@@ -189,7 +189,7 @@
             this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
             this.redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.redoToolStripMenuItem.Text = "Redo";
-            this.redoToolStripMenuItem.Click += new System.EventHandler(this.OnRedoAction);
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.OnHistoryAction);
             // 
             // toolStripSeparator2
             // 

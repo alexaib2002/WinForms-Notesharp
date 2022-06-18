@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -23,6 +22,7 @@ namespace NotepadSharp
             OnNewDocumentLoad();
         }
 
+
         private void OnNewDocumentLoad()
         {
             originText = txtEditBox.Text;
@@ -41,26 +41,28 @@ namespace NotepadSharp
             UpdatePositionLabel(sender as RichTextBox);
         }
 
-        // TODO improve code
-
-        private void OnUndoAction(object sender, EventArgs e)
+        private void OnHistoryAction(object sender, EventArgs e)
         {
-            // hack for not calling TextChanged Event
+            String actionName = sender.ToString();
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
-            
-            if (historyIndex >= 1) txtEditBox.Text = textHistory[historyIndex-- - 1];
-            else txtEditBox.Text = originText;
+
+            switch (actionName.ToLower())
+            {
+                case "undo":
+                    {
+                        if (historyIndex >= 1) txtEditBox.Text = textHistory[historyIndex-- - 1];
+                        else txtEditBox.Text = originText;
+                    }
+                    break;
+                case "redo":
+                    {
+                        if (historyIndex <= textHistory.Count - 1) txtEditBox.Text = textHistory[++historyIndex - 1];
+                    }
+                    break;
+            }
 
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
-        }
-
-        private void OnRedoAction(object sender, EventArgs e)
-        {
-            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
-            
-            if (historyIndex <= textHistory.Count - 1) txtEditBox.Text = textHistory[++historyIndex - 1];
-
-            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
+            UpdatePositionLabel(txtEditBox);
         }
 
         private void OnSaveAction(object sender, EventArgs e)
@@ -107,6 +109,7 @@ namespace NotepadSharp
         }
 
         private void OnTextEditKeyPressed(object sender, PreviewKeyDownEventArgs e) => UpdateZoomLabel();
+
 
         private void UpdateZoomLabel()
         {

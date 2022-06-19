@@ -24,18 +24,15 @@ namespace NoteSharp
 
         private void OnNewDocumentCreated(object sender, EventArgs e)
         {
+            // TODO refactor
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
-            txtEditBox.Text = "";
-            textHistory.ResetHistory(txtEditBox.Text);
+            ResetDocumentContent();
 
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
 
-        private void OnCloseOptionPressed(object sender, EventArgs e)
-        {
-            Dispose();
-        }
+        private void OnCloseOptionPressed(object sender, EventArgs e) => Dispose();
 
         private void OnTextChanged(object sender, EventArgs e)
         {
@@ -46,10 +43,11 @@ namespace NoteSharp
 
         private void OnHistoryAction(object sender, EventArgs e)
         {
-            string actionName = sender.ToString();
+            string actionName = sender.ToString().ToLower();
+            // TODO refactor
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
-            switch (actionName.ToLower())
+            switch (actionName)
             {
                 case "undo":
                     {
@@ -69,6 +67,7 @@ namespace NoteSharp
 
         private void OnSaveLoadAction(object sender, EventArgs e)
         {
+            // TODO refactor
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
             string actionName = sender.ToString().ToLower();
@@ -156,6 +155,11 @@ namespace NoteSharp
 
         private void OnTextEditKeyPressed(object sender, PreviewKeyDownEventArgs e) => UpdateZoomLabel();
 
+        private void ResetDocumentContent()
+        {
+            txtEditBox.Text = "";
+            textHistory.ResetHistory(txtEditBox.Text);
+        }
 
         private void UpdateZoomLabel()
         {
@@ -167,11 +171,9 @@ namespace NoteSharp
             int currentChar = textBox.SelectionStart;
             currentLine = textBox.GetLineFromCharIndex(currentChar);
 
-            // update current col
             int firstRowChar = textBox.GetFirstCharIndexFromLine(currentLine);
             currentColumn = currentChar - firstRowChar;
 
-            // update label
             posLbl.Text = string.Format("Ln {0}, Col {1}", currentLine + 1, currentColumn + 1);
         }
     }

@@ -63,6 +63,8 @@ namespace NoteSharp
             UpdatePositionLabel(txtEditBox);
         }
 
+        private void OnSelectAllAction(object sender, EventArgs e) => txtEditBox.SelectAll();
+
         private void OnSaveLoadAction(object sender, EventArgs e)
         {
             ExecuteUnregisteredTextUpdate(

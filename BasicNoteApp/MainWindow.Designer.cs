@@ -1,4 +1,4 @@
-﻿namespace NotepadSharp
+﻿namespace NoteSharp
 {
     partial class MainWindow
     {

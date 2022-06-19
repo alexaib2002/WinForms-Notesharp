@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
-namespace NotepadSharp
+namespace NoteSharp
 {
     public sealed partial class MainWindow : Form
     {
         private const string DialogFilters = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
 
-        // TODO history class would be helpful
-        private readonly List<string> textHistory = new List<string>();
-        private int historyIndex = 0;
-        private string originText;
+        private readonly TextHistory textHistory = new TextHistory();
 
         private int currentLine;
         private int currentColumn;
@@ -25,20 +22,12 @@ namespace NotepadSharp
         }
 
 
-        private void ResetHistory()
-        {
-            historyIndex = 0;
-            textHistory.Clear();
-            originText = txtEditBox.Text;
-        }
-
-
         private void OnNewDocumentCreated(object sender, EventArgs e)
         {
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
             txtEditBox.Text = "";
-            ResetHistory();
+            textHistory.ResetHistory(txtEditBox.Text);
 
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
@@ -51,8 +40,7 @@ namespace NotepadSharp
         private void OnTextChanged(object sender, EventArgs e)
         {
             string newText = (sender as RichTextBox).Text;
-            if (historyIndex < textHistory.Count) textHistory.RemoveRange(historyIndex, textHistory.Count);
-            textHistory.Insert(historyIndex++, newText);
+            textHistory.AppendElement(newText);
             UpdatePositionLabel(sender as RichTextBox);
         }
 
@@ -65,13 +53,12 @@ namespace NotepadSharp
             {
                 case "undo":
                     {
-                        if (historyIndex >= 1) txtEditBox.Text = textHistory[historyIndex-- - 1];
-                        else txtEditBox.Text = originText;
+                        txtEditBox.Text = textHistory.UndoHistory();
                     }
                     break;
                 case "redo":
                     {
-                        if (historyIndex <= textHistory.Count - 1) txtEditBox.Text = textHistory[++historyIndex - 1];
+                        if (textHistory.CanRedoHistory()) txtEditBox.Text = textHistory.RedoHistory();
                     }
                     break;
             }
@@ -137,7 +124,7 @@ namespace NotepadSharp
                             {
                                 textReader = new StreamReader(path);
                                 txtEditBox.Text = textReader.ReadToEnd();
-                                ResetHistory();
+                                textHistory.ResetHistory(txtEditBox.Text);
                             }
                             finally
                             {

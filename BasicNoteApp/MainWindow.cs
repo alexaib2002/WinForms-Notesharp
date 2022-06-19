@@ -9,6 +9,7 @@ namespace NotepadSharp
     {
         private const string DialogFilters = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
 
+        // TODO history class would be helpful
         private readonly List<string> textHistory = new List<string>();
         private int historyIndex = 0;
         private string originText;
@@ -20,13 +21,26 @@ namespace NotepadSharp
         {
             InitializeComponent();
             CenterToParent();
-            OnNewDocumentLoad();
+            OnNewDocumentCreated(null, null);
         }
 
 
-        private void OnNewDocumentLoad()
+        private void ResetHistory()
         {
+            historyIndex = 0;
+            textHistory.Clear();
             originText = txtEditBox.Text;
+        }
+
+
+        private void OnNewDocumentCreated(object sender, EventArgs e)
+        {
+            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
+
+            txtEditBox.Text = "";
+            ResetHistory();
+
+            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
 
         private void OnCloseOptionPressed(object sender, EventArgs e)
@@ -68,6 +82,8 @@ namespace NotepadSharp
 
         private void OnSaveLoadAction(object sender, EventArgs e)
         {
+            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
+
             string actionName = sender.ToString().ToLower();
             FileDialog dialog = null;
             switch (actionName)
@@ -121,6 +137,7 @@ namespace NotepadSharp
                             {
                                 textReader = new StreamReader(path);
                                 txtEditBox.Text = textReader.ReadToEnd();
+                                ResetHistory();
                             }
                             finally
                             {
@@ -133,6 +150,9 @@ namespace NotepadSharp
                         break;
                 }
             }
+
+            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
+            UpdatePositionLabel(txtEditBox);
         }
 
         private void OnZoomInAction(object sender, EventArgs e)

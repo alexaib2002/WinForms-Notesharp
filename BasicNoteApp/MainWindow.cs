@@ -44,7 +44,7 @@ namespace NotepadSharp
 
         private void OnHistoryAction(object sender, EventArgs e)
         {
-            String actionName = sender.ToString();
+            string actionName = sender.ToString();
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
             switch (actionName.ToLower())
@@ -66,56 +66,71 @@ namespace NotepadSharp
             UpdatePositionLabel(txtEditBox);
         }
 
-        private void OnSaveAction(object sender, EventArgs e)
+        private void OnSaveLoadAction(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            string actionName = sender.ToString().ToLower();
+            FileDialog dialog = null;
+            switch (actionName)
             {
-                Filter = DialogFilters,
-                RestoreDirectory = true
-            };
-
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string path = saveFileDialog.FileName;
-                TextWriter textWriter = null;
-                try
-                {
-                    textWriter = new StreamWriter(path);
-                    textWriter.Write(txtEditBox.Text);
-                }
-                finally
-                {
-                    if (textWriter != null)
+                case "save":
                     {
-                        textWriter.Close();
+                        dialog = new SaveFileDialog
+                        {
+                            Filter = DialogFilters,
+                            RestoreDirectory = true
+                        };
                     }
-                }
+                    break;
+                case "load":
+                    {
+                        dialog = new OpenFileDialog
+                        {
+                            Filter = DialogFilters,
+                            RestoreDirectory = true
+                        };
+                    }
+                    break;
             }
-        }
 
-        private void OnLoadAction(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Filter = DialogFilters,
-                RestoreDirectory = true
-            };
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                string path = openFileDialog.FileName;
-                TextReader textReader = null;
-                try
+                string path = dialog.FileName;
+                switch (actionName)
                 {
-                    textReader = new StreamReader(path);
-                    txtEditBox.Text = textReader.ReadToEnd();
-                }
-                finally
-                {
-                    if (textReader != null)
-                    {
-                        textReader.Close();
-                    }
+                    case "save":
+                        {
+                            TextWriter textWriter = null;
+                            try
+                            {
+                                textWriter = new StreamWriter(path);
+                                textWriter.Write(txtEditBox.Text);
+                            }
+                            finally
+                            {
+                                if (textWriter != null)
+                                {
+                                    textWriter.Close();
+                                }
+                            }
+                        }
+                        break;
+                    case "load":
+                        {
+                            TextReader textReader = null;
+                            try
+                            {
+                                textReader = new StreamReader(path);
+                                txtEditBox.Text = textReader.ReadToEnd();
+                            }
+                            finally
+                            {
+                                if (textReader != null)
+                                {
+                                    textReader.Close();
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }

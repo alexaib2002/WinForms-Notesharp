@@ -1,14 +1,13 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NoteSharp")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Simple and open source Notepad clone written in C# using WinForms GUI framework")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("alexaib2002")]
 [assembly: AssemblyProduct("NoteSharp")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]

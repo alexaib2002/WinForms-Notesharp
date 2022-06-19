@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -21,16 +20,15 @@ namespace NoteSharp
             OnNewDocumentCreated(null, null);
         }
 
-
-        private void OnNewDocumentCreated(object sender, EventArgs e)
+        private void ExecuteUnregisteredTextUpdate(Action action)
         {
-            // TODO refactor
             this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
-
-            ResetDocumentContent();
-
+            action();
             this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
         }
+
+
+        private void OnNewDocumentCreated(object sender, EventArgs e) => ExecuteUnregisteredTextUpdate(ResetDocumentContent);
 
         private void OnCloseOptionPressed(object sender, EventArgs e) => Dispose();
 
@@ -44,100 +42,98 @@ namespace NoteSharp
         private void OnHistoryAction(object sender, EventArgs e)
         {
             string actionName = sender.ToString().ToLower();
-            // TODO refactor
-            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
 
-            switch (actionName)
-            {
-                case "undo":
-                    {
-                        txtEditBox.Text = textHistory.UndoHistory();
-                    }
-                    break;
-                case "redo":
-                    {
-                        if (textHistory.CanRedoHistory()) txtEditBox.Text = textHistory.RedoHistory();
-                    }
-                    break;
-            }
+            ExecuteUnregisteredTextUpdate(
+            () => {
+                switch (actionName)
+                {
+                    case "undo":
+                        {
+                            txtEditBox.Text = textHistory.UndoHistory();
+                        }
+                        break;
+                    case "redo":
+                        {
+                            if (textHistory.CanRedoHistory()) txtEditBox.Text = textHistory.RedoHistory();
+                        }
+                        break;
+                }
+            });
 
-            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
             UpdatePositionLabel(txtEditBox);
         }
 
         private void OnSaveLoadAction(object sender, EventArgs e)
         {
-            // TODO refactor
-            this.txtEditBox.TextChanged -= new System.EventHandler(this.OnTextChanged);
-
-            string actionName = sender.ToString().ToLower();
-            FileDialog dialog = null;
-            switch (actionName)
-            {
-                case "save":
-                    {
-                        dialog = new SaveFileDialog
-                        {
-                            Filter = DialogFilters,
-                            RestoreDirectory = true
-                        };
-                    }
-                    break;
-                case "load":
-                    {
-                        dialog = new OpenFileDialog
-                        {
-                            Filter = DialogFilters,
-                            RestoreDirectory = true
-                        };
-                    }
-                    break;
-            }
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                string path = dialog.FileName;
+            ExecuteUnregisteredTextUpdate(
+            () => {
+                string actionName = sender.ToString().ToLower();
+                FileDialog dialog = null;
                 switch (actionName)
                 {
                     case "save":
                         {
-                            TextWriter textWriter = null;
-                            try
+                            dialog = new SaveFileDialog
                             {
-                                textWriter = new StreamWriter(path);
-                                textWriter.Write(txtEditBox.Text);
-                            }
-                            finally
-                            {
-                                if (textWriter != null)
-                                {
-                                    textWriter.Close();
-                                }
-                            }
+                                Filter = DialogFilters,
+                                RestoreDirectory = true
+                            };
                         }
                         break;
                     case "load":
                         {
-                            TextReader textReader = null;
-                            try
+                            dialog = new OpenFileDialog
                             {
-                                textReader = new StreamReader(path);
-                                txtEditBox.Text = textReader.ReadToEnd();
-                                textHistory.ResetHistory(txtEditBox.Text);
-                            }
-                            finally
-                            {
-                                if (textReader != null)
-                                {
-                                    textReader.Close();
-                                }
-                            }
+                                Filter = DialogFilters,
+                                RestoreDirectory = true
+                            };
                         }
                         break;
                 }
-            }
 
-            this.txtEditBox.TextChanged += new System.EventHandler(this.OnTextChanged);
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    string path = dialog.FileName;
+                    switch (actionName)
+                    {
+                        case "save":
+                            {
+                                TextWriter textWriter = null;
+                                try
+                                {
+                                    textWriter = new StreamWriter(path);
+                                    textWriter.Write(txtEditBox.Text);
+                                }
+                                finally
+                                {
+                                    if (textWriter != null)
+                                    {
+                                        textWriter.Close();
+                                    }
+                                }
+                            }
+                            break;
+                        case "load":
+                            {
+                                TextReader textReader = null;
+                                try
+                                {
+                                    textReader = new StreamReader(path);
+                                    txtEditBox.Text = textReader.ReadToEnd();
+                                    textHistory.ResetHistory(txtEditBox.Text);
+                                }
+                                finally
+                                {
+                                    if (textReader != null)
+                                    {
+                                        textReader.Close();
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                }
+            });
             UpdatePositionLabel(txtEditBox);
         }
 
@@ -161,10 +157,7 @@ namespace NoteSharp
             textHistory.ResetHistory(txtEditBox.Text);
         }
 
-        private void UpdateZoomLabel()
-        {
-            zoomLbl.Text = string.Format("{0}%", txtEditBox.ZoomFactor * 100);
-        }
+        private void UpdateZoomLabel() => zoomLbl.Text = string.Format("{0}%", txtEditBox.ZoomFactor * 100);
 
         private void UpdatePositionLabel(RichTextBox textBox)
         {

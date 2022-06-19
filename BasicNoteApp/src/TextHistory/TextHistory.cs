@@ -35,7 +35,7 @@ namespace NoteSharp
             return originText;
         }
 
-        private void TruncateHistory() => textHistory.RemoveRange(historyIndex, textHistory.Count);
+        private void TruncateHistory() => textHistory.RemoveRange(historyIndex, textHistory.Count - historyIndex);
 
     }
 }

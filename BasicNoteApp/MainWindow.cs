@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 
 namespace NotepadSharp
@@ -75,9 +76,20 @@ namespace NotepadSharp
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // TODO implement actual saving
-                Console.WriteLine("Saving not implemented");
-                Console.WriteLine(saveFileDialog.FileName);
+                string path = saveFileDialog.FileName;
+                TextWriter textWriter = null;
+                try
+                {
+                    textWriter = new StreamWriter(path);
+                    textWriter.Write(txtEditBox.Text);
+                }
+                finally
+                {
+                    if (textWriter != null)
+                    {
+                        textWriter.Close();
+                    }
+                }
             }
         }
 
@@ -91,8 +103,20 @@ namespace NotepadSharp
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // TODO implement actual loading 
-                Console.WriteLine("Loading not implemented");
+                string path = openFileDialog.FileName;
+                TextReader textReader = null;
+                try
+                {
+                    textReader = new StreamReader(path);
+                    txtEditBox.Text = textReader.ReadToEnd();
+                }
+                finally
+                {
+                    if (textReader != null)
+                    {
+                        textReader.Close();
+                    }
+                }
             }
         }
 

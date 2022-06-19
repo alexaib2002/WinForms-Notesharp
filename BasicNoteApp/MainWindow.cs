@@ -153,6 +153,8 @@ namespace NoteSharp
 
         private void OnTextEditKeyPressed(object sender, PreviewKeyDownEventArgs e) => UpdateZoomLabel();
 
+        private void OnAboutAction(object sender, EventArgs e) => new AboutBox().Show();
+
         private void ResetDocumentContent()
         {
             txtEditBox.Text = "";
